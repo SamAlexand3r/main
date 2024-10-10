@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './PlaceholderPage.css';
 import logo from './img/logo.png'; // Логотип
 import backgroundVideo from './img/background.mp4'; // Видео-фон
@@ -13,16 +13,13 @@ const PlaceholderPage = () => {
   const [bgGif, setBGGif] = useState(''); // Для GIF
   const [locationError, setLocationError] = useState('');
 
+
   const openWeatherApiKey = 'dea33256ba5e24c0a61b7a3ff8ed6d8f';
   const currencyApiKey = 'fca_live_VDzbPo5CpxlVl8Tc78C3eUD8abWhYBaSrr7T55B5';
 
   
-  useEffect(() => {
-    getUserLocation();
-    fetchCurrencyRates();
-  }, []);
-
-  const getUserLocation = () => {
+  // Мемоизация функции для получения местоположения
+  const getUserLocation = useCallback(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(position => {
         const { latitude, longitude } = position.coords;
@@ -33,8 +30,9 @@ const PlaceholderPage = () => {
     } else {
       setLocationError('Geolokacija nije podržana na vašem pretraživaču.');
     }
-  };
+  }, []);
 
+  // Получение данных о погоде
   const fetchWeather = (lat, lon) => {
     const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${openWeatherApiKey}&lang=sr`; // Устанавливаем параметр языка "sr" для сербского
 
@@ -78,7 +76,16 @@ const PlaceholderPage = () => {
       });
   };
 
-  const fetchCurrencyRates = () => {
+  // Мемоизация функции конвертации валют
+  const convertCurrency = useCallback(() => {
+    if (currencyRates[fromCurrency] && currencyRates[toCurrency]) {
+      const converted = (amount / currencyRates[fromCurrency]) * currencyRates[toCurrency];
+      setConvertedAmount(converted.toFixed(2));
+    }
+  }, [amount, fromCurrency, toCurrency, currencyRates]);
+
+  // Получение курсов валют
+  const fetchCurrencyRates = useCallback(() => {
     const currencyUrl = `https://api.freecurrencyapi.com/v1/latest?apikey=${currencyApiKey}&currencies=USD,GBP,EUR`;
 
     fetch(currencyUrl)
@@ -89,30 +96,19 @@ const PlaceholderPage = () => {
       .catch(error => {
         console.log("Greška pri dobijanju podataka o kursu valuta:", error);
       });
-  };
-
-  const handleAmountChange = (e) => {
-    setAmount(e.target.value);
-  };
-
-  const handleFromCurrencyChange = (e) => {
-    setFromCurrency(e.target.value);
-  };
-
-  const handleToCurrencyChange = (e) => {
-    setToCurrency(e.target.value);
-  };
-
-  const convertCurrency = () => {
-    if (currencyRates[fromCurrency] && currencyRates[toCurrency]) {
-      const converted = (amount / currencyRates[fromCurrency]) * currencyRates[toCurrency];
-      setConvertedAmount(converted.toFixed(2));
-    }
-  };
+  }, [currencyApiKey]);
 
   useEffect(() => {
-    convertCurrency();
-  }, [amount, fromCurrency, toCurrency, currencyRates]);
+    getUserLocation(); // Вызов функции
+  }, [getUserLocation]); // Добавляем функцию в зависимости
+
+  useEffect(() => {
+    fetchCurrencyRates(); // Вызов функции для курсов валют
+  }, [fetchCurrencyRates]); // Добавляем функцию в зависимости
+
+  useEffect(() => {
+    convertCurrency(); // Вызов функции
+  }, [convertCurrency]); // Добавляем функцию в зависимости
 
   return (
     <div className="placeholder-page">
@@ -153,14 +149,14 @@ const PlaceholderPage = () => {
             <h2>Kalkulator valuta</h2>
             <div>
               <label>Iz:</label>
-              <select value={fromCurrency} onChange={handleFromCurrencyChange}>
+              <select value={fromCurrency} onChange={(e) => setFromCurrency(e.target.value)}>
                 <option value="EUR">EUR</option>
                 <option value="USD">USD</option>
                 <option value="GBP">GBP</option>
               </select>
 
               <label>U:</label>
-              <select value={toCurrency} onChange={handleToCurrencyChange}>
+              <select value={toCurrency} onChange={(e) => setToCurrency(e.target.value)}>
                 <option value="EUR">EUR</option>
                 <option value="USD">USD</option>
                 <option value="GBP">GBP</option>
@@ -168,7 +164,7 @@ const PlaceholderPage = () => {
             </div>
             <div>
               <label>Količina:</label>
-              <input type="number" value={amount} onChange={handleAmountChange} />
+              <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
             </div>
             {convertedAmount && (
               <div>
