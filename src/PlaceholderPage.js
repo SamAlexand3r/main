@@ -19,7 +19,16 @@ const PlaceholderPage = () => {
 
   const openWeatherApiKey = 'dea33256ba5e24c0a61b7a3ff8ed6d8f';
   const currencyApiKey = 'fca_live_VDzbPo5CpxlVl8Tc78C3eUD8abWhYBaSrr7T55B5';
-  const aviationstackApiKey = '650f09af86f36ec0019e1f838586f7df'; 
+  const aviationstackApiKey = '650f09af86f36ec0019e1f838586f7df';
+
+  const currencyFlags = {
+    EUR: '🇪🇺',
+    USD: '🇺🇸',
+    GBP: '🇬🇧',
+    RUB: '🇷🇺',
+    UAH: '🇺🇦',
+    RSD: '🇷🇸',
+  };
 
   // Мемоизация функции для получения местоположения
   const getUserLocation = useCallback(() => {
@@ -31,7 +40,7 @@ const PlaceholderPage = () => {
         setLocationError('Nije moguće dobiti vašu lokaciju.');
       });
     } else {
-      setLocationError('Geolokacija nije podržана na vašem pretraživaču.');
+      setLocationError('Geolokacija nije podržана na vašем pretraživaču.');
     }
   }, []);
 
@@ -179,11 +188,11 @@ const PlaceholderPage = () => {
           </div>
         </div>
 
-        {/* Новый дизайн конвертера валют */}
+        {/* Новый дизайн конвертера валют с динамическими флагами */}
         <div className="currency-section new-design">
           <div className="currency-block">
             <div className="currency-field">
-              <span className="currency-flag">🇪🇺</span>
+              <span className="currency-flag">{currencyFlags[fromCurrency]}</span>
               <select value={fromCurrency} onChange={(e) => setFromCurrency(e.target.value)}>
                 <option value="EUR">EUR</option>
                 <option value="USD">USD</option>
@@ -207,7 +216,7 @@ const PlaceholderPage = () => {
 
           <div className="currency-block">
             <div className="currency-field">
-              <span className="currency-flag">🇷🇺</span>
+              <span className="currency-flag">{currencyFlags[toCurrency]}</span>
               <select value={toCurrency} onChange={(e) => setToCurrency(e.target.value)}>
                 <option value="EUR">EUR</option>
                 <option value="USD">USD</option>
