@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './PlaceholderPage.css';
 import logo from './img/logo.png'; // Логотип
-import backgroundVideo from './img/background.mp4'; // Видео-фон
+import backgroundVideo from './img/background.webm'; // Видео-фон
 
 const PlaceholderPage = () => {
   const [weather, setWeather] = useState({});
@@ -148,7 +148,7 @@ const PlaceholderPage = () => {
     <div className="placeholder-page">
       {/* Видео-фон */}
       <video autoPlay muted loop className="background-video">
-        <source src={backgroundVideo} type="video/mp4" />
+        <source src={backgroundVideo} type="video/webm" />
         Your browser does not support the video tag.
       </video>
 

@@ -28,7 +28,6 @@
   border-radius: 10px;
   border: 2px solid #007bff;
   padding: 10px 20px;
-
 }
 
 .signature-block {
@@ -63,7 +62,7 @@
   justify-content: center;
   background-size: cover; /* Растягиваем GIF на весь блок */
   font-weight: bold;
-
+  background-position: center; /* Делаем фон по центру */
 }
 
 .schedule-section {
@@ -75,7 +74,7 @@
   border-radius: 10px; /* Закругленные углы для таблицы */
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Тень для придания глубины */
   border: 2px solid orange;
-
+  overflow-x: auto; /* Горизонтальная прокрутка для таблицы на мобильных */
 }
 
 .flight-buttons {
@@ -101,12 +100,13 @@
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-
+  min-width: 600px; /* Устанавливаем минимальную ширину для прокрутки */
 }
 
 .flight-table th, .flight-table td {
   padding: 10px;
   border-bottom: 1px solid #ddd;
+  white-space: nowrap; /* Предотвращаем перенос текста */
 }
 
 .flight-table th {
