@@ -19,7 +19,7 @@ const PlaceholderPage = () => {
 
   const openWeatherApiKey = 'dea33256ba5e24c0a61b7a3ff8ed6d8f';
   const currencyApiKey = 'fca_live_VDzbPo5CpxlVl8Tc78C3eUD8abWhYBaSrr7T55B5';
-  const aviationstackApiKey = '650f09af86f36ec0019e1f838586f7df';
+  const aviationstackApiKey = 'f0963941655e062952055e2015b16960';
 
   const currencyFlags = {
     EUR: '🇪🇺',
