@@ -10,14 +10,17 @@ const PlaceholderPage = () => {
   const [fromCurrency, setFromCurrency] = useState('EUR'); // Валюта из
   const [toCurrency, setToCurrency] = useState('USD'); // Валюта в
   const [convertedAmount, setConvertedAmount] = useState(null); // Результат конвертации
+  const [flights, setFlights] = useState([]); // Данные о рейсах
+  const [isArrivals, setIsArrivals] = useState(true); // Переключение между прилетами и вылетами
+  const [showAllFlights, setShowAllFlights] = useState(false); // Для отображения всех рейсов
   const [bgGif, setBGGif] = useState(''); // Для GIF
+  const [weatherIcon, setWeatherIcon] = useState(''); // Иконка погоды
   const [locationError, setLocationError] = useState('');
-
 
   const openWeatherApiKey = 'dea33256ba5e24c0a61b7a3ff8ed6d8f';
   const currencyApiKey = 'fca_live_VDzbPo5CpxlVl8Tc78C3eUD8abWhYBaSrr7T55B5';
+  const aviationstackApiKey = '650f09af86f36ec0019e1f838586f7df'; // Ваш ключ API для Aviationstack
 
-  
   // Мемоизация функции для получения местоположения
   const getUserLocation = useCallback(() => {
     if (navigator.geolocation) {
@@ -34,18 +37,22 @@ const PlaceholderPage = () => {
 
   // Получение данных о погоде
   const fetchWeather = (lat, lon) => {
-    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${openWeatherApiKey}&lang=sr`; // Устанавливаем параметр языка "sr" для сербского
+    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${openWeatherApiKey}&lang=sr`;
 
     fetch(weatherUrl)
       .then(response => response.json())
       .then(data => {
+        console.log('Weather Data:', data); // Для отладки
         const main = data.weather[0].main;
-        const temp = Math.round(data.main.temp); // Округляем температуру до целого числа
+        const temp = Math.round(data.main.temp);
         setWeather({
           condition: main,
           temperature: temp,
-          city: data.name, // Попробуем получить город на сербском
+          city: data.name,
         });
+
+        // Иконка погоды
+        setWeatherIcon(`http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`);
 
         switch (main) {
           case "Snow":
@@ -72,7 +79,7 @@ const PlaceholderPage = () => {
         }
       })
       .catch(error => {
-        console.log("Greška pri dobijanju vremenskih podataka:", error);
+        console.log("Ошибка при получении погоды:", error);
       });
   };
 
@@ -94,21 +101,48 @@ const PlaceholderPage = () => {
         setCurrencyRates(data.data);
       })
       .catch(error => {
-        console.log("Greška pri dobijanju podataka o kursu valuta:", error);
+        console.log("Ошибка при получении курсов валют:", error);
       });
   }, [currencyApiKey]);
 
-  useEffect(() => {
-    getUserLocation(); // Вызов функции
-  }, [getUserLocation]); // Добавляем функцию в зависимости
+  // Получение данных о рейсах
+  const fetchFlights = useCallback(() => {
+    const airportCode = 'TGD'; // Код аэропорта Подгорицы
+    const flightType = isArrivals ? 'arr_iata' : 'dep_iata'; // Прилеты или вылеты
+    const flightUrl = `http://api.aviationstack.com/v1/flights?access_key=${aviationstackApiKey}&${flightType}=${airportCode}`;
+
+    fetch(flightUrl)
+      .then(response => response.json())
+      .then(data => {
+        console.log('Flight Data:', data); // Для отладки
+        setFlights(data.data);
+      })
+      .catch(error => {
+        console.log("Ошибка при получении данных о рейсах:", error);
+      });
+  }, [aviationstackApiKey, isArrivals]);
 
   useEffect(() => {
-    fetchCurrencyRates(); // Вызов функции для курсов валют
-  }, [fetchCurrencyRates]); // Добавляем функцию в зависимости
+    getUserLocation(); // Вызов функции для получения местоположения
+  }, [getUserLocation]);
 
   useEffect(() => {
-    convertCurrency(); // Вызов функции
-  }, [convertCurrency]); // Добавляем функцию в зависимости
+    fetchCurrencyRates(); // Вызов функции для получения курсов валют
+  }, [fetchCurrencyRates]);
+
+  useEffect(() => {
+    convertCurrency(); // Вызов функции конвертации валют
+  }, [convertCurrency]);
+
+  useEffect(() => {
+    fetchFlights(); // Вызов функции для получения рейсов
+  }, [fetchFlights]);
+
+  // Функция для форматирования времени в "час:минуты"
+  const formatTime = (time) => {
+    const date = new Date(time);
+    return date.toLocaleTimeString('sr-RS', { hour: '2-digit', minute: '2-digit' });
+  };
 
   return (
     <div className="placeholder-page">
@@ -125,7 +159,7 @@ const PlaceholderPage = () => {
 
       {/* Блок с подписью */}
       <div className="signature-block">
-        <p>Portal je u procesu razvoja, uskoro će ovde biti puno zanimljivih stvari!</p> {/* Обновленная надпись */}
+        <p>Portal je u procesu razvoja, uskoro će ovde biti puno zanimljivih stvari!</p>
       </div>
 
       <div className="content-section">
@@ -136,6 +170,7 @@ const PlaceholderPage = () => {
               <p>{locationError}</p>
             ) : (
               <div>
+                <img src={weatherIcon} alt="Weather Icon" />
                 <p>{weather.city}</p>
                 <p>{weather.temperature ? `${weather.temperature}°C` : 'Učitavanje...'}</p>
                 <p>{weather.condition}</p>
@@ -173,6 +208,51 @@ const PlaceholderPage = () => {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Блок для отображения расписания рейсов */}
+      <div className="schedule-section">
+        <div className="flight-buttons">
+          <button
+            className={isArrivals ? 'active' : ''}
+            onClick={() => setIsArrivals(true)}
+          >
+            Prileti
+          </button>
+          <button
+            className={!isArrivals ? 'active' : ''}
+            onClick={() => setIsArrivals(false)}
+          >
+            Odlazi
+          </button>
+        </div>
+
+        <table className="flight-table">
+          <thead>
+            <tr>
+              <th>Vreme</th>
+              <th>Destinacija</th>
+              <th>Let</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {flights.slice(0, showAllFlights ? flights.length : 5).map((flight, index) => (
+              <tr key={index}>
+                <td>{formatTime(flight.departure.scheduled || flight.arrival.scheduled)}</td>
+                <td>{flight.departure.airport || flight.arrival.airport}</td>
+                <td>{flight.flight.iata}</td>
+                <td>{flight.flight_status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {flights.length > 5 && (
+          <button onClick={() => setShowAllFlights(!showAllFlights)}>
+            {showAllFlights ? 'Sakrij letove' : 'Prikaži sve letove'}
+          </button>
+        )}
       </div>
     </div>
   );

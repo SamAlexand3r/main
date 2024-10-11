@@ -1,14 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
 .placeholder-page {
   position: relative;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  height: 100vh;
-  font-family: 'Roboto', sans-serif; /* Шрифт Roboto */
-  overflow: hidden;
+  align-items: center;
 }
 
 .background-video {
@@ -18,72 +14,158 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: -1; /* Видео-фон будет под контентом */
+  z-index: -1;
 }
 
 .logo-container {
-  margin-bottom: 20px;
+  text-align: center;
 }
 
 .logo {
-  max-width: 300px; /* Размер логотипа */
+  width: 300px;
+  height: auto;
   background-color: white;
-  border-radius: 15px;
-  border: 2px solid #ff6600; /* Оранжевая окантовка */
-  padding: 15px;
-
+  border-radius: 10px;
+  border: 2px solid #007bff;
+  padding: 10px 20px;
 
 }
 
 .signature-block {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  margin: 20px;
+  padding: 10px 20px;
+  border: 2px solid orange;
+  border-radius: 10px;
   background-color: white;
-  border-radius: 15px;
-  border: 2px solid #ff6600; /* Оранжевая окантовка */
-  padding: 15px;
-  width: 300px;
-  height: 100px;
   text-align: center;
-  margin-bottom: 30px;
-  z-index: 1;
+  font-size: 1.2rem;
 }
 
 .content-section {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
-  z-index: 1; /* Контент поверх видео */
+  justify-content: space-around;
+  width: 100%;
+  max-width: 1200px;
+  margin-top: 10px;
 }
 
 .weather-section, .currency-section {
+  width: 280px;
+  height: 280px;
+  padding: 20px;
+  border: 2px solid orange;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  margin: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-size: cover; /* Растягиваем GIF на весь блок */
+  font-weight: bold;
+
+}
+
+.schedule-section {
+  width: 90%;
+  max-width: 800px;
+  margin-top: 20px;
+  background-color: rgba(255, 255, 255, 0.9); /* Добавляем фон для таблицы */
+  padding: 10px;
+  border-radius: 10px; /* Закругленные углы для таблицы */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Тень для придания глубины */
+  border: 2px solid orange;
+
+}
+
+.flight-buttons {
   display: flex;
   justify-content: center;
-  align-items: center;
-  background-size: cover;
-  background-position: center;
-  border-radius: 10px;
-  padding: 20px;
-  width: 300px;
-  height: 300px;
-  color: white;
-  border: 2px solid #ff6600; /* Оранжевая окантовка */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.currency-section {
-  background: white;
-  color: black;
-  text-align: center;
-}
-
-.currency-info div {
   margin-bottom: 10px;
 }
 
-.weather-info, .currency-info {
-  text-align: center;
+.flight-buttons button {
+  background-color: #6b6565;
+  border: none;
+  padding: 10px 20px;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.flight-buttons button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.flight-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+
+}
+
+.flight-table th, .flight-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.flight-table th {
+  background-color: #007bff;
+  color: white;
+}
+
+.flight-table td {
+  color: #333;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: orange;
+}
+
+/* Адаптивные стили для мобильных устройств */
+@media (max-width: 768px) {
+  .content-section {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .weather-section, .currency-section {
+    width: 90%;
+    height: auto;
+  }
+
+  .logo {
+    width: 150px;
+  }
+
+  .signature-block {
+    font-size: 1rem;
+  }
+
+  .schedule-section {
+    width: 100%;
+  }
+
+  .flight-table th, .flight-table td {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+
+  .flight-buttons {
+    flex-direction: column;
+  }
+
+  .flight-buttons button {
+    margin: 5px 0;
+    width: 100%;
+  }
 }
