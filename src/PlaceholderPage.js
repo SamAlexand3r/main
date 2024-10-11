@@ -31,7 +31,7 @@ const PlaceholderPage = () => {
         setLocationError('Nije moguće dobiti vašu lokaciju.');
       });
     } else {
-      setLocationError('Geolokacija nije podržana na vašem pretraživaču.');
+      setLocationError('Geolokacija nije podržана na vašem pretraživaču.');
     }
   }, []);
 
@@ -42,7 +42,6 @@ const PlaceholderPage = () => {
     fetch(weatherUrl)
       .then(response => response.json())
       .then(data => {
-        console.log('Weather Data:', data); // Для отладки
         const main = data.weather[0].main;
         const temp = Math.round(data.main.temp);
         setWeather({
@@ -85,15 +84,17 @@ const PlaceholderPage = () => {
 
   // Мемоизация функции конвертации валют
   const convertCurrency = useCallback(() => {
-    if (currencyRates[fromCurrency] && currencyRates[toCurrency]) {
+    if (currencyRates && currencyRates[fromCurrency] && currencyRates[toCurrency]) {
       const converted = (amount / currencyRates[fromCurrency]) * currencyRates[toCurrency];
       setConvertedAmount(converted.toFixed(2));
+    } else {
+      console.log('Курсы валют не загружены.');
     }
   }, [amount, fromCurrency, toCurrency, currencyRates]);
 
   // Получение курсов валют
   const fetchCurrencyRates = useCallback(() => {
-    const currencyUrl = `https://api.freecurrencyapi.com/v1/latest?apikey=${currencyApiKey}&currencies=USD,GBP,EUR`;
+    const currencyUrl = `https://api.freecurrencyapi.com/v1/latest?apikey=${currencyApiKey}&currencies=USD,GBP,EUR,RUB,UAH,RSD`;
 
     fetch(currencyUrl)
       .then(response => response.json())
@@ -114,7 +115,6 @@ const PlaceholderPage = () => {
     fetch(flightUrl)
       .then(response => response.json())
       .then(data => {
-        console.log('Flight Data:', data); // Для отладки
         setFlights(data.data);
       })
       .catch(error => {
@@ -179,33 +179,50 @@ const PlaceholderPage = () => {
           </div>
         </div>
 
-        <div className="currency-section">
-          <div className="currency-info">
-            <h2>Kalkulator valuta</h2>
-            <div>
-              <label>Iz:</label>
+        {/* Новый дизайн конвертера валют */}
+        <div className="currency-section new-design">
+          <div className="currency-block">
+            <div className="currency-field">
+              <span className="currency-flag">🇪🇺</span>
               <select value={fromCurrency} onChange={(e) => setFromCurrency(e.target.value)}>
                 <option value="EUR">EUR</option>
                 <option value="USD">USD</option>
                 <option value="GBP">GBP</option>
+                <option value="RUB">RUB</option>
+                <option value="UAH">UAH</option>
+                <option value="RSD">RSD</option>
               </select>
+            </div>
+            <input
+              type="number"
+              className="currency-input"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+            />
+          </div>
 
-              <label>U:</label>
+          <div className="currency-switch">
+            <span>⇆</span>
+          </div>
+
+          <div className="currency-block">
+            <div className="currency-field">
+              <span className="currency-flag">🇷🇺</span>
               <select value={toCurrency} onChange={(e) => setToCurrency(e.target.value)}>
                 <option value="EUR">EUR</option>
                 <option value="USD">USD</option>
                 <option value="GBP">GBP</option>
+                <option value="RUB">RUB</option>
+                <option value="UAH">UAH</option>
+                <option value="RSD">RSD</option>
               </select>
             </div>
-            <div>
-              <label>Količina:</label>
-              <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
-            </div>
-            {convertedAmount && (
-              <div>
-                <p>Rezultat: {convertedAmount} {toCurrency}</p>
-              </div>
-            )}
+            <input
+              type="text"
+              className="currency-output"
+              value={convertedAmount || '0.00'}
+              disabled
+            />
           </div>
         </div>
       </div>
