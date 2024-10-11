@@ -1,7 +1,7 @@
 {
   "name": "Monte-i.com",
   "version": "0.1.0",
-  "homepage": "/main/build",
+  "homepage": ".",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
