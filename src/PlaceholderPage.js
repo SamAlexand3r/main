@@ -20,7 +20,7 @@ const PlaceholderPage = () => {
   const openWeatherApiKey = 'dea33256ba5e24c0a61b7a3ff8ed6d8f';
   const currencyApiKey = 'fca_live_VDzbPo5CpxlVl8Tc78C3eUD8abWhYBaSrr7T55B5';
   const aviationstackApiKey = '650f09af86f36ec0019e1f838586f7df'; 
-  
+
   // Мемоизация функции для получения местоположения
   const getUserLocation = useCallback(() => {
     if (navigator.geolocation) {
@@ -52,7 +52,7 @@ const PlaceholderPage = () => {
         });
 
         // Иконка погоды
-        setWeatherIcon(`http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`);
+        setWeatherIcon(`https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`);
 
         switch (main) {
           case "Snow":
@@ -109,7 +109,7 @@ const PlaceholderPage = () => {
   const fetchFlights = useCallback(() => {
     const airportCode = 'TGD'; // Код аэропорта Подгорицы
     const flightType = isArrivals ? 'arr_iata' : 'dep_iata'; // Прилеты или вылеты
-    const flightUrl = `http://api.aviationstack.com/v1/flights?access_key=${aviationstackApiKey}&${flightType}=${airportCode}`;
+    const flightUrl = `https://api.aviationstack.com/v1/flights?access_key=${aviationstackApiKey}&${flightType}=${airportCode}`;
 
     fetch(flightUrl)
       .then(response => response.json())
